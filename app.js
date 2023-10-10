@@ -3,7 +3,10 @@ const newPeriodFromEl = document.getElementsByTagName("form")
 [0];
 const startDateInputEl = document.getElementById("start-date");
 const endDateInputEl = document.getElementById("end-date");
-const renderPastPeriods = document.getElementById('past-periods')
+const pastPeriodContainer = document.getElementById('past-periods')
+
+//add the storage key as an app-wide constant 
+const STORAGE_KEY = "period-tracker"
 
 //listen to form submissions
 newPeriodFromEl.addEventListener("submit", (event) => {
@@ -39,11 +42,11 @@ function checkDatesInvalid(startDate, endDate) {
     // 3. move focus to the error location
     // instead, for now, we clear the dates if either
     // or both are invalid
+    alert("Date are invalid. Reconsider the information")
     newPeriodFromEl.reset();
     return true;
   }
   else{
-    alert("Date are invalid. Reconsider the information")
     return false;
   }
 }
@@ -55,7 +58,6 @@ function storeNewPeriod(startDate, endDate){
     //Add the new Period object to the end of the array of period objects.
 
     periods.push({startDate , endDate})
-
     //sort array from newest
     periods.sort((a , b) => {
         return new Date(b.startDate) - new Date(a.startDate)
@@ -73,6 +75,54 @@ function getAllStoredPeriods(){
     //if no period is stored, default to an empty array
     // otherwise return the stored data as parsed JSON
     const periods = data ? JSON.parse(data) : [];
-
-    return periods
+    console.dir(periods);
+    console.log(periods);
+    return periods;
 }
+
+function renderPastPeriods() {
+  
+  const pastePeriodHeader = document.createElement("h2");
+  const pastPeriodList = document.createElement("ul")
+  const periods = getAllStoredPeriods();
+  
+  //exit if there are no periods
+  if (periods.length === 0) {
+    return
+  }
+  
+  //clear the list for re-render
+  pastPeriodContainer.innerHTML = "";
+  pastPeriodContainer.textContent= "Past Periods";
+
+  periods.forEach((period) => {
+    const periodEl = document.createElement("li");
+    periodEl.textContent = `Form ${formatDate(
+      period.startDate,
+    )} to ${formatDate(period.endDate)}`;
+    pastPeriodList.appendChild(periodEl)
+  });
+
+  pastPeriodContainer.appendChild(pastePeriodHeader);
+  pastPeriodContainer.appendChild(pastPeriodList)
+}
+
+function formatDate(dateString){
+  //convert the date string to a date object.
+  const date = new Date(dateString)
+
+  //format the date into a locale-specific string
+  //include your locale for better user experience
+  return date.toLocaleDateString("en-US", {timeZone: "UTC"});
+
+}
+
+//start the app by rendering the past periods
+renderPastPeriods();
+
+
+
+
+
+
+

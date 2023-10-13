@@ -121,6 +121,20 @@ function formatDate(dateString){
 renderPastPeriods();
 
 
+//error handler for checking of service worker is supported or exists
+
+if("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then(
+      (registration) => {
+          console.log("service worker registration is successful" , registration);
+      },
+      (error) => {
+          console.log(`service worker registration failed` &{error});
+      }
+  );
+} else{
+  console.error("service workers are not supported.");
+}
 
 
 

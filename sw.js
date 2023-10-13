@@ -16,7 +16,7 @@ const APP_STATIC_RESOURCES = [
 
 //on install, cahce the static resources
 self.addEventListener("install", (event) => {
-  event.waitUntill(
+  event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       cache.addAll(APP_STATIC_RESOURCES);
@@ -26,7 +26,7 @@ self.addEventListener("install", (event) => {
 
 // delete old caches on activation
 self.addEventListener("activate", (event) => {
-  event.waitUntill(
+  event.waitUntil(
     (async () => {
       const names = await caches.keys();
       await Promise.all(
@@ -37,7 +37,7 @@ self.addEventListener("activate", (event) => {
         })
       );
       await clients.claim();
-    })()
+    })(),
   );
 });
 
@@ -61,8 +61,11 @@ self.addEventListener("fetch" , (event) => {
                 return cachedResponse;
             }
             //response with 404
+            else{
+              console.log("navigator function failed");
             return new Response(null , {status: 404})
-        })(),
+          }
+          })(),
     );
 });
 
